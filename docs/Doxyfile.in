@@ -1,0 +1,28 @@
+# Doxygen configuration (only non-default values). Configured by docs/CMakeLists.txt.
+PROJECT_NAME           = "GeoKernel"
+PROJECT_NUMBER         = @PROJECT_VERSION@
+PROJECT_BRIEF          = "@PROJECT_DESCRIPTION@"
+OUTPUT_DIRECTORY       = @GK_DOXYGEN_OUTPUT@
+INPUT                  = @GK_DOXYGEN_INPUT@
+USE_MDFILE_AS_MAINPAGE = @PROJECT_SOURCE_DIR@/README.md
+FILE_PATTERNS          = *.hpp *.md
+RECURSIVE              = YES
+STRIP_FROM_PATH        = @PROJECT_SOURCE_DIR@/include
+STRIP_FROM_INC_PATH    = @PROJECT_SOURCE_DIR@/include
+EXTRACT_ALL            = NO
+EXTRACT_PRIVATE        = NO
+HIDE_UNDOC_MEMBERS     = NO
+WARN_IF_UNDOCUMENTED   = NO
+WARN_AS_ERROR          = NO
+MACRO_EXPANSION        = YES
+PREDEFINED             = GK_EXPORT= GK_NO_EXPORT=
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+HAVE_DOT               = YES
+CLASS_GRAPH            = YES
+COLLABORATION_GRAPH    = NO
+INCLUDE_GRAPH          = NO
+INCLUDED_BY_GRAPH      = NO
+DOT_IMAGE_FORMAT       = svg
+INTERACTIVE_SVG        = YES
+QUIET                  = YES
