@@ -9,6 +9,10 @@ add_executable(geokernel_tests
   unit/core/test_result.cpp
   unit/core/test_metrics.cpp
   unit/core/test_log.cpp
+  # math
+  unit/math/test_vec3.cpp
+  unit/math/test_mat4.cpp
+  unit/math/test_quat.cpp
 )
 
 target_include_directories(geokernel_tests PRIVATE

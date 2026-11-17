@@ -8,6 +8,10 @@ add_library(geokernel
   core/ComponentRegistry.cpp
   core/Log.cpp
   core/Metrics.cpp
+  # math
+  math/Vec3.cpp
+  math/Mat4.cpp
+  math/Quat.cpp
 )
 add_library(GeoKernel::geokernel ALIAS geokernel)
 
