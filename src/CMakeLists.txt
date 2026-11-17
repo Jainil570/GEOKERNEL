@@ -20,6 +20,8 @@ add_library(geokernel
   algorithms/MollerTrumboreIntersector.cpp
   algorithms/EdgeFunctionIntersector.cpp
   algorithms/MeshRaycaster.cpp
+  # io
+  io/detail/ParseUtils.cpp
 )
 add_library(GeoKernel::geokernel ALIAS geokernel)
 
