@@ -1,0 +1,20 @@
+{
+  "name": "GeoKernel",
+  "build": { "dockerfile": "../Dockerfile", "context": ".." },
+  "remoteUser": "dev",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cmake-tools",
+        "llvm-vs-code-extensions.vscode-clangd",
+        "matepek.vscode-catch2-test-adapter",
+        "editorconfig.editorconfig"
+      ],
+      "settings": {
+        "cmake.useCMakePresets": "always",
+        "clangd.arguments": ["--compile-commands-dir=${workspaceFolder}/build/dev", "--clang-tidy"]
+      }
+    }
+  },
+  "postCreateCommand": "cmake --preset dev"
+}
