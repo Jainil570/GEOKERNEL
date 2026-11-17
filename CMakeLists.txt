@@ -84,6 +84,11 @@ if(GK_BUILD_BENCHMARKS)
   add_subdirectory(benchmarks)
 endif()
 
+if(GK_INSTALL)
+  include(Install)
+  include(Packaging)
+endif()
+
 # -----------------------------------------------------------------------------
 #  Summary
 # -----------------------------------------------------------------------------
