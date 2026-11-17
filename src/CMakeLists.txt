@@ -12,6 +12,7 @@ add_library(geokernel
   math/Vec3.cpp
   math/Mat4.cpp
   math/Quat.cpp
+  math/Transform.cpp
 )
 add_library(GeoKernel::geokernel ALIAS geokernel)
 

@@ -13,6 +13,7 @@ add_executable(geokernel_tests
   unit/math/test_vec3.cpp
   unit/math/test_mat4.cpp
   unit/math/test_quat.cpp
+  unit/math/test_transform.cpp
 )
 
 target_include_directories(geokernel_tests PRIVATE
