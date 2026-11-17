@@ -23,6 +23,7 @@ add_library(geokernel
   # io
   io/detail/ParseUtils.cpp
   io/StlReader.cpp
+  io/ObjReader.cpp
 )
 add_library(GeoKernel::geokernel ALIAS geokernel)
 
