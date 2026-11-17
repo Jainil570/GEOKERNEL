@@ -80,6 +80,10 @@ if(GK_BUILD_TESTS)
   add_subdirectory(tests)
 endif()
 
+if(GK_BUILD_BENCHMARKS)
+  add_subdirectory(benchmarks)
+endif()
+
 # -----------------------------------------------------------------------------
 #  Summary
 # -----------------------------------------------------------------------------
