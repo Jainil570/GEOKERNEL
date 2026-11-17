@@ -5,7 +5,9 @@ include(GoogleTest)
 
 add_executable(geokernel_tests
   # core
+  unit/core/test_interface_id.cpp
   unit/core/test_component.cpp
+  unit/core/test_component_registry.cpp
   unit/core/test_result.cpp
   unit/core/test_metrics.cpp
   unit/core/test_log.cpp
@@ -19,6 +21,7 @@ add_executable(geokernel_tests
   unit/geometry/test_mesh.cpp
   # algorithms
   unit/algorithms/test_ray_triangle.cpp
+  unit/algorithms/test_mesh_raycaster.cpp
   # io
   unit/io/test_parse_utils.cpp
   unit/io/test_stl_reader.cpp
