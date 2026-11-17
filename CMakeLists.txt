@@ -66,6 +66,10 @@ if(GK_BUILD_APPS)
   add_subdirectory(apps)
 endif()
 
+if(GK_BUILD_EXAMPLES)
+  add_subdirectory(examples)
+endif()
+
 if(GK_BUILD_TESTS)
   enable_testing()
   add_subdirectory(tests)
