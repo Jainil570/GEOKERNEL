@@ -62,6 +62,12 @@ include(Dependencies)
 # -----------------------------------------------------------------------------
 add_subdirectory(src)
 
+# Must precede every add_subdirectory that calls add_test() (apps/examples
+# register smoke tests), otherwise those tests are silently dropped.
+if(GK_BUILD_TESTS)
+  enable_testing()
+endif()
+
 if(GK_BUILD_APPS)
   add_subdirectory(apps)
 endif()
@@ -71,7 +77,6 @@ if(GK_BUILD_EXAMPLES)
 endif()
 
 if(GK_BUILD_TESTS)
-  enable_testing()
   add_subdirectory(tests)
 endif()
 
