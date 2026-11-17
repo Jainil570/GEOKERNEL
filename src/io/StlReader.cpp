@@ -108,7 +108,9 @@ Result<std::unique_ptr<Mesh>> readBinary(std::istream& in, std::uint64_t size, c
         std::array<Mesh::Index, 3> idx{};
         for (std::size_t k = 0; k < 3; ++k) {
             const unsigned char* base = rec.data() + 12 + 12 * k;  // skip the 12-byte normal
-            const Vec3 p{detail::readF32LE(base), detail::readF32LE(base + 4), detail::readF32LE(base + 8)};
+            const Vec3 p{static_cast<double>(detail::readF32LE(base)),
+                         static_cast<double>(detail::readF32LE(base + 4)),
+                         static_cast<double>(detail::readF32LE(base + 8))};
             if (!p.isFinite()) {
                 return makeError(ErrorCode::ParseError,
                                  "binary STL: non-finite coordinate in triangle " + std::to_string(i));
