@@ -16,6 +16,7 @@ add_executable(geokernel_tests
   unit/math/test_transform.cpp
   # geometry
   unit/geometry/test_aabb.cpp
+  unit/geometry/test_mesh.cpp
 )
 
 target_include_directories(geokernel_tests PRIVATE

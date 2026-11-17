@@ -15,6 +15,7 @@ add_library(geokernel
   math/Transform.cpp
   # geometry
   geometry/AABB.cpp
+  geometry/Mesh.cpp
 )
 add_library(GeoKernel::geokernel ALIAS geokernel)
 
