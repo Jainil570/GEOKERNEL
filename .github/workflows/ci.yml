@@ -1,0 +1,149 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CTEST_OUTPUT_ON_FAILURE: "1"
+  CTEST_PARALLEL_LEVEL: "4"
+
+jobs:
+  # ---------------------------------------------------------------------------
+  format:
+    name: clang-format
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check formatting
+        run: |
+          sudo apt-get update && sudo apt-get install -y clang-format-18
+          find include src tests apps examples benchmarks -name '*.hpp' -o -name '*.cpp' \
+            | xargs clang-format-18 --dry-run --Werror
+
+  # ---------------------------------------------------------------------------
+  build-test:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: "Linux GCC 13",     os: ubuntu-24.04, cc: gcc-13,   cxx: g++-13,     preset: dev }
+          - { name: "Linux Clang 18",   os: ubuntu-24.04, cc: clang-18, cxx: clang++-18, preset: dev }
+          - { name: "Linux GCC Release",os: ubuntu-24.04, cc: gcc-13,   cxx: g++-13,     preset: release }
+          - { name: "macOS AppleClang", os: macos-14,     cc: clang,    cxx: clang++,    preset: dev }
+          - { name: "Windows MSVC",     os: windows-2022, cc: cl,       cxx: cl,         preset: msvc }
+    env:
+      CC: ${{ matrix.cc }}
+      CXX: ${{ matrix.cxx }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Ninja (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - name: Install Ninja (macOS)
+        if: runner.os == 'macOS'
+        run: brew install ninja
+
+      - name: Cache FetchContent downloads
+        uses: actions/cache@v4
+        with:
+          path: build/${{ matrix.preset }}/_deps
+          key: deps-${{ matrix.os }}-${{ matrix.cxx }}-${{ hashFiles('cmake/Dependencies.cmake') }}
+
+      - name: Configure
+        run: cmake --preset ${{ matrix.preset }}
+      - name: Build
+        run: cmake --build --preset ${{ matrix.preset }} --parallel
+      - name: Test
+        run: ctest --preset ${{ matrix.preset }}
+
+  # ---------------------------------------------------------------------------
+  sanitizers:
+    name: ASan + UBSan (Clang)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ninja-build clang-18
+      - name: Configure
+        run: cmake --preset asan -DCMAKE_CXX_COMPILER=clang++-18 -DCMAKE_C_COMPILER=clang-18
+      - name: Build
+        run: cmake --build --preset asan --parallel
+      - name: Test (any sanitizer report fails the job)
+        run: ctest --preset asan
+
+  # ---------------------------------------------------------------------------
+  coverage:
+    name: Coverage (gcov + gcovr, gate >= 85 %)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          sudo apt-get update && sudo apt-get install -y ninja-build g++-13
+          pipx install gcovr
+      - name: Configure
+        run: cmake --preset coverage -DCMAKE_CXX_COMPILER=g++-13 -DCMAKE_C_COMPILER=gcc-13
+      - name: Build
+        run: cmake --build --preset coverage --parallel
+      - name: Test
+        run: ctest --preset coverage
+      - name: Report + enforce threshold
+        run: GCOV=gcov-13 ./scripts/coverage.sh build/coverage
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html
+          path: build/coverage/coverage-html
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: build/coverage/coverage.xml
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  # ---------------------------------------------------------------------------
+  clang-tidy:
+    name: clang-tidy
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ninja-build clang-18 clang-tidy-18
+      - name: Configure (clang-tidy runs as part of the build)
+        run: >
+          cmake --preset tidy
+          -DCMAKE_CXX_COMPILER=clang++-18 -DCMAKE_C_COMPILER=clang-18
+          -DGK_CLANG_TIDY_EXE=$(which clang-tidy-18)
+      - name: Build + analyse
+        run: cmake --build --preset tidy --parallel
+
+  # ---------------------------------------------------------------------------
+  install-consumer:
+    name: Install + find_package consumer
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - name: Build and install GeoKernel
+        run: |
+          cmake -S . -B build/pkg -G Ninja -DCMAKE_BUILD_TYPE=Release \
+                -DGK_BUILD_TESTS=OFF -DGK_BUILD_EXAMPLES=OFF -DGK_BUILD_APPS=OFF
+          cmake --build build/pkg --parallel
+          cmake --install build/pkg --prefix "$PWD/out/install"
+      - name: Build consumer project against the installed package
+        run: |
+          cmake -S tests/install_consumer -B build/consumer -G Ninja \
+                -DCMAKE_PREFIX_PATH="$PWD/out/install"
+          cmake --build build/consumer
+          ./build/consumer/consumer tests/data/cube.obj

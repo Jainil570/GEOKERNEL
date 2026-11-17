@@ -1,0 +1,22 @@
+coverage:
+  precision: 1
+  round: down
+  range: "75...95"
+  status:
+    project:
+      default:
+        target: 85%      # mirrors the gcovr --fail-under-line gate in CI
+        threshold: 1%
+    patch:
+      default:
+        target: 80%
+
+ignore:
+  - "tests/**"
+  - "examples/**"
+  - "benchmarks/**"
+  - "apps/**"
+
+comment:
+  layout: "diff, files"
+  require_changes: true
