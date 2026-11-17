@@ -1,0 +1,13 @@
+* text=auto eol=lf
+
+*.cpp  text diff=cpp
+*.hpp  text diff=cpp
+*.in   text
+*.cmake text
+*.md   text diff=markdown
+*.sh   text eol=lf
+*.ps1  text eol=crlf
+
+# Mesh assets: never normalise line endings (byte-exact test fixtures)
+*.stl  binary
+*.obj  -text
