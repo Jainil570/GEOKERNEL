@@ -24,6 +24,9 @@ add_library(geokernel
   io/detail/ParseUtils.cpp
   io/StlReader.cpp
   io/ObjReader.cpp
+  io/MeshLoader.cpp
+  # composition root
+  Kernel.cpp
 )
 add_library(GeoKernel::geokernel ALIAS geokernel)
 
