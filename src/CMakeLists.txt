@@ -13,6 +13,8 @@ add_library(geokernel
   math/Mat4.cpp
   math/Quat.cpp
   math/Transform.cpp
+  # geometry
+  geometry/AABB.cpp
 )
 add_library(GeoKernel::geokernel ALIAS geokernel)
 
