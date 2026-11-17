@@ -22,6 +22,7 @@ add_library(geokernel
   algorithms/MeshRaycaster.cpp
   # io
   io/detail/ParseUtils.cpp
+  io/StlReader.cpp
 )
 add_library(GeoKernel::geokernel ALIAS geokernel)
 
