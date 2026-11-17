@@ -1,0 +1,109 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": { "major": 3, "minor": 21, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "installDir": "${sourceDir}/out/install/${presetName}",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "GK_BUILD_TESTS": "ON",
+        "GK_BUILD_EXAMPLES": "ON",
+        "GK_BUILD_APPS": "ON"
+      }
+    },
+    {
+      "name": "dev",
+      "displayName": "Debug (developer default)",
+      "inherits": "base",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+    },
+    {
+      "name": "release",
+      "displayName": "Release",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "GK_BUILD_BENCHMARKS": "ON"
+      }
+    },
+    {
+      "name": "asan",
+      "displayName": "Debug + AddressSanitizer + UBSan (Clang)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "GK_ENABLE_ASAN": "ON",
+        "GK_ENABLE_UBSAN": "ON"
+      }
+    },
+    {
+      "name": "coverage",
+      "displayName": "Debug + gcov coverage (GCC)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_COMPILER": "g++",
+        "GK_ENABLE_COVERAGE": "ON",
+        "GK_BUILD_EXAMPLES": "OFF",
+        "GK_BUILD_APPS": "OFF"
+      }
+    },
+    {
+      "name": "tidy",
+      "displayName": "clang-tidy static analysis (Clang)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "GK_ENABLE_CLANG_TIDY": "ON"
+      }
+    },
+    {
+      "name": "msvc",
+      "displayName": "Visual Studio 2022 (x64)",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "GK_BUILD_TESTS": "ON",
+        "GK_BUILD_EXAMPLES": "ON",
+        "GK_BUILD_APPS": "ON"
+      },
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
+    }
+  ],
+  "buildPresets": [
+    { "name": "dev",      "configurePreset": "dev" },
+    { "name": "release",  "configurePreset": "release" },
+    { "name": "asan",     "configurePreset": "asan" },
+    { "name": "coverage", "configurePreset": "coverage" },
+    { "name": "tidy",     "configurePreset": "tidy" },
+    { "name": "msvc",     "configurePreset": "msvc", "configuration": "Debug" }
+  ],
+  "testPresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "output": { "outputOnFailure": true },
+      "execution": { "noTestsAction": "error", "stopOnFailure": false }
+    },
+    { "name": "dev",      "inherits": "base", "configurePreset": "dev" },
+    { "name": "release",  "inherits": "base", "configurePreset": "release" },
+    {
+      "name": "asan",
+      "inherits": "base",
+      "configurePreset": "asan",
+      "environment": {
+        "ASAN_OPTIONS": "detect_leaks=1:strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1",
+        "UBSAN_OPTIONS": "print_stacktrace=1:halt_on_error=1"
+      }
+    },
+    { "name": "coverage", "inherits": "base", "configurePreset": "coverage" },
+    { "name": "msvc",     "inherits": "base", "configurePreset": "msvc", "configuration": "Debug" }
+  ]
+}

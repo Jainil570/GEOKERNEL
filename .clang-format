@@ -1,0 +1,40 @@
+# GeoKernel code style — enforced in CI (clang-format --dry-run --Werror)
+---
+Language: Cpp
+BasedOnStyle: Google
+Standard: c++17
+ColumnLimit: 110
+IndentWidth: 4
+AccessModifierOffset: -4
+IndentCaseLabels: true
+PointerAlignment: Left
+ReferenceAlignment: Left
+DerivePointerAlignment: false
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: true
+AlignConsecutiveShortCaseStatements:
+  Enabled: true
+AlignConsecutiveAssignments: false
+AlignTrailingComments: true
+BreakConstructorInitializers: BeforeColon
+ConstructorInitializerIndentWidth: 4
+ContinuationIndentWidth: 4
+IncludeBlocks: Regroup
+IncludeCategories:
+  # 1. gtest / benchmark first in test & bench files
+  - Regex: '^<(gtest|gmock|benchmark)/'
+    Priority: 1
+  # 2. C++ standard library
+  - Regex: '^<[a-z_]+>$'
+    Priority: 2
+  # 3. third-party
+  - Regex: '^<.*>'
+    Priority: 3
+  # 4. project headers
+  - Regex: '^".*"'
+    Priority: 4
+SortIncludes: CaseSensitive
+SpacesBeforeTrailingComments: 2
+...
