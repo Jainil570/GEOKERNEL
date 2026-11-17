@@ -18,6 +18,7 @@ add_library(geokernel
   geometry/Mesh.cpp
   # algorithms
   algorithms/MollerTrumboreIntersector.cpp
+  algorithms/EdgeFunctionIntersector.cpp
 )
 add_library(GeoKernel::geokernel ALIAS geokernel)
 

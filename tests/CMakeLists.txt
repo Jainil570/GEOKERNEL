@@ -17,6 +17,8 @@ add_executable(geokernel_tests
   # geometry
   unit/geometry/test_aabb.cpp
   unit/geometry/test_mesh.cpp
+  # algorithms
+  unit/algorithms/test_ray_triangle.cpp
 )
 
 target_include_directories(geokernel_tests PRIVATE
