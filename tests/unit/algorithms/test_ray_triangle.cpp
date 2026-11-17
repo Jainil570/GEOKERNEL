@@ -96,12 +96,17 @@ TEST(RayTriangleCrossCheck, KernelsAgreeOnRandomRays) {
     EdgeFunctionIntersector ef;
     std::mt19937 rng(20261117);  // fixed seed => reproducible
     std::uniform_real_distribution<double> coord(-2.0, 2.0);
+    std::uniform_real_distribution<double> bary(0.05, 0.45);  // strictly interior, away from edges
     const auto rnd = [&] { return Vec3{coord(rng), coord(rng), coord(rng)}; };
 
     int hits = 0;
     for (int i = 0; i < 5000; ++i) {
         const Triangle tri{rnd(), rnd(), rnd()};
-        const Ray ray{rnd() * 3.0, rnd()};
+        const Vec3 origin = rnd() * 3.0;
+        // Even iterations aim at an interior point (exercises the hit path);
+        // odd iterations use a fully random direction (mostly misses).
+        const Vec3 dir = (i % 2 == 0) ? tri.pointAt(bary(rng), bary(rng)) - origin : rnd();
+        const Ray ray{origin, dir};
         const auto a = mt.intersect(ray, tri, CullMode::None);
         const auto b = ef.intersect(ray, tri, CullMode::None);
         if (a.has_value() != b.has_value()) {
@@ -118,7 +123,7 @@ TEST(RayTriangleCrossCheck, KernelsAgreeOnRandomRays) {
             EXPECT_EQ(a->frontFace, b->frontFace);
         }
     }
-    EXPECT_GT(hits, 100) << "sample should exercise the hit path";
+    EXPECT_GT(hits, 2000) << "aimed rays should almost all hit (degenerate triangles excepted)";
 }
 
 TEST(RayTriangle, ComponentsReportRegistryNames) {
