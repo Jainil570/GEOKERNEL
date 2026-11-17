@@ -27,6 +27,8 @@ add_executable(geokernel_tests
   unit/io/test_stl_reader.cpp
   unit/io/test_obj_reader.cpp
   unit/io/test_mesh_loader.cpp
+  # integration
+  integration/test_pipeline.cpp
 )
 
 target_include_directories(geokernel_tests PRIVATE
