@@ -5,6 +5,7 @@ find_package(Threads REQUIRED)
 
 add_library(geokernel
   # core — component model, registry, diagnostics
+  core/ComponentRegistry.cpp
   core/Log.cpp
   core/Metrics.cpp
 )
